@@ -1,0 +1,38 @@
+{
+  "landingPage": "/wp-admin/edit.php?post_type=shared_file",
+  "preferredVersions": {
+    "php": "8.0",
+    "wp": "latest"
+  },
+  "phpExtensionBundles": [
+    "kitchen-sink"
+  ],
+  "features": {
+    "networking": true
+  },
+  "steps": [
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wordpress/wp-load.php'; global $wp_rewrite; $wp_rewrite->set_permalink_structure('/%postname%/'); $wp_rewrite->flush_rules( true ); flush_rewrite_rules(); ?>"
+    },
+    {
+      "step": "installPlugin",
+      "pluginZipFile": {
+        "resource": "wordpress.org/plugins",
+        "slug": "shared-files"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "login",
+      "username": "admin",
+      "password": "password"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wordpress/wp-load.php'; $uploads_dir = wp_get_upload_dir()['basedir']; if (!is_dir($uploads_dir)) { mkdir( $uploads_dir ); } $sf_dir = wp_get_upload_dir()['basedir'] . '/shared-files/'; mkdir( $sf_dir ); ?>"
+    }
+  ]
+}
